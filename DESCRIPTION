@@ -5,9 +5,16 @@ Authors@R:
     person(given = "Filip",
            family = "Krikava",
            role = c("aut", "cre"),
-           email = "filip.krikava@fit.cvut.cz"
+           email = "filip.krikava@fit.cvut.cz",
            comment = c(ORCID = "0000-0002-0478-6202"))
-Description: Allows one to export values from R scripts into a file that can be read by Latex
+Description:
+    Allows one to export values from R scripts into a file that can be read by Latex.
+    The values are represented as `\newcommand` macros.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Suggests: 
+    testthat
+Imports: 
+    stringr
+RoxygenNote: 6.1.1
