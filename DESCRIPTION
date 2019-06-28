@@ -16,5 +16,6 @@ LazyData: true
 Suggests: 
     testthat
 Imports: 
-    stringr
+    stringr,
+    tibble
 RoxygenNote: 6.1.1
