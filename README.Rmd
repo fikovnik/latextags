@@ -1,0 +1,30 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+# latextags
+
+<!-- badges: start -->
+[![Codecov test coverage](https://codecov.io/gh/fikovnik/latextags/branch/master/graph/badge.svg)](https://codecov.io/gh/fikovnik/latextags?branch=master)
+<!-- badges: end -->
+
+Output values from R into LaTeX files that can be included in LaTeX documents.
+
+## Installation
+
+You can install the development version from [GitHub](https://github.com/) with:
+
+```{r, eval = FALSE}
+# install.packages("devtools")
+devtools::install_github("fikovnik/latextags")
+```
