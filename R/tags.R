@@ -9,19 +9,36 @@
 #'
 #' @export
 create_tags <- function(filename, prefix="", default=TRUE) {
-    tgs <- new.env(parent=emptyenv())
-    tgs$filename <- filename
-    tgs$prefix <- prefix
-    tgs$tags <- tibble::tibble(name=character(), value=character())
+    tags <- new.env(parent=emptyenv())
+    tags$filename <- filename
+    tags$prefix <- prefix
+    tags$values <- tibble::tibble(name=character(), value=character(), latex=character())
 
     if (default) {
-        set_default_tags(tgs)
+        set_default_tags(tags)
     }
 
     writeLines("", filename)
 
-    class(tgs) <- "latextags"
-    tgs
+    class(tags) <- "latextags"
+
+    tags
+}
+
+tags_filename <- function(tags) {
+    tags$filename
+}
+
+tags_prefix <- function(tags) {
+    tags$prefix
+}
+
+tags <- function(tags) {
+    tags$values
+}
+
+tags_latex <- function(tags) {
+    tags(tags)$latex
 }
 
 #' Create a new tag
@@ -40,16 +57,19 @@ tag <- function(name, value, tags=get_default_tags()) {
     stopifnot(length(name)==1)
 
     value <- as.character(value)
+    latex <- generate_latex_command(name, value, prefix=tags_prefix(tags))
 
-    existing <- which(tags$tags$name == name)
+    existing <- which(tags$values$name == name)
 
     if (length(existing) > 0) {
-        tags$tags[existing, "value"] <- value
+        tags$values[existing, "value"] <- value
+        tags$values[existing, "latex"] <- latex
     } else {
-        tags$tags <- tibble::add_row(
-            tags$tags,
+        tags$values <- tibble::add_row(
+            tags$values,
             name,
-            value
+            value,
+            latex
         )
     }
 
@@ -64,34 +84,36 @@ latex_command_name <- function(s) {
     stringr::str_replace_all(s, "\\s", "")
 }
 
-generate_latex_commands <- function(tags, prefix = "") {
-    names <- stringr::str_c(prefix, tags$name)
-    names <- latex_command_name(names)
+generate_latex_command <- function(name, value, prefix = "") {
+    stopifnot(length(names) == length(value))
+
+    name <- stringr::str_c(prefix, name)
+    name <- latex_command_name(name)
 
     stringr::str_c(
-        "\\newcommand{\\", names, "}{", tags$value, "\\xspace}", collapse="\n"
+        "\\newcommand{\\", name, "}{", value, "\\xspace}"
     )
 }
 
 save_tag_file <- function(tags) {
-    out <- generate_latex_commands(tags$tags)
-    writeLines(out, tags$filename)
+    out <- stringr::str_c(tags(tags)$latex, collapse="\n")
+    writeLines(out, tags_filename(tags))
 }
 
 get_default_tags <- function() {
     getOption("latextags_default")
 }
 
-set_default_tags <- function(tgs) {
-    options(latextags_default=tgs)
+set_default_tags <- function(tags) {
+    options(latextags_default=tags)
 }
 
 #' @export
 as.list.latextags <- function(x, ...) {
     list(
-        filename=x$filename,
-        prefix=x$prefix,
-        tags=x$tags
+        filename=tags_filename(x),
+        prefix=tags_prefix(x),
+        tags=tags(x)
     )
 }
 
